@@ -25,6 +25,34 @@ cpp_optimize_genetic_modeling <- function(init_parameters, Y, X, O, w, C, config
     .Call('_PLNmodels_cpp_optimize_genetic_modeling', PACKAGE = 'PLNmodels', init_parameters, Y, X, O, w, C, configuration)
 }
 
+cpp_optimize_pln_vloglik <- function(Y, X, O, Omega, Theta, M, S) {
+    .Call('_PLNmodels_cpp_optimize_pln_vloglik', PACKAGE = 'PLNmodels', Y, X, O, Omega, Theta, M, S)
+}
+
+cpp_optimize_pln_Omega_full <- function(M, X, Theta, S) {
+    .Call('_PLNmodels_cpp_optimize_pln_Omega_full', PACKAGE = 'PLNmodels', M, X, Theta, S)
+}
+
+cpp_optimize_pln_Omega_spherical <- function(M, X, Theta, S) {
+    .Call('_PLNmodels_cpp_optimize_pln_Omega_spherical', PACKAGE = 'PLNmodels', M, X, Theta, S)
+}
+
+cpp_optimize_pln_Omega_diagonal <- function(M, X, Theta, S) {
+    .Call('_PLNmodels_cpp_optimize_pln_Omega_diagonal', PACKAGE = 'PLNmodels', M, X, Theta, S)
+}
+
+cpp_optimize_pln_Theta <- function(M, X) {
+    .Call('_PLNmodels_cpp_optimize_pln_Theta', PACKAGE = 'PLNmodels', M, X)
+}
+
+cpp_optimize_pln_M <- function(init_M, Y, X, O, S, Theta, Omega, configuration) {
+    .Call('_PLNmodels_cpp_optimize_pln_M', PACKAGE = 'PLNmodels', init_M, Y, X, O, S, Theta, Omega, configuration)
+}
+
+cpp_optimize_pln_S <- function(init_S, O, M, Theta, diag_Omega, configuration) {
+    .Call('_PLNmodels_cpp_optimize_pln_S', PACKAGE = 'PLNmodels', init_S, O, M, Theta, diag_Omega, configuration)
+}
+
 cpp_optimize_rank <- function(init_parameters, Y, X, O, w, configuration) {
     .Call('_PLNmodels_cpp_optimize_rank', PACKAGE = 'PLNmodels', init_parameters, Y, X, O, w, configuration)
 }

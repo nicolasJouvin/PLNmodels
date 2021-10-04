@@ -16,21 +16,20 @@
 # ftol_abs and ftol_rel could maybe be used if defined on J(params), but I'm not sure.
 #
 # Dimensions are checked only on C++ side.
-optimize_zi <- function(init_parameters, Y, X, O, configuration) {
+optimize_vem <- function(init_parameters, Y, X, O, configuration) {
 
-    config_optim_Theta0 <- config_for("Theta0", configuration)
-    config_optim_M      <- config_for("M"     , configuration)
-    config_optim_S      <- config_for("S"     , configuration)
+    config_optim_M <- config_for("M", configuration)
+    config_optim_S <- config_for("S", configuration)
 
     # Link to the approximate function to optimize Omega ,depending on the target structure
-    cpp_optimize_zi_Omega <- switch(
+    cpp_optimize_pln_Omega <- switch(
       configuration$covariance,
-      "spherical" = cpp_optimize_zi_Omega_spherical,
-      "diagonal"  = cpp_optimize_zi_Omega_diagonal,
-      "full"      = cpp_optimize_zi_Omega_full
+      "spherical" = cpp_optimize_pln_Omega_spherical,
+      "diagonal"  = cpp_optimize_pln_Omega_diagonal,
+      "full"      = cpp_optimize_pln_Omega_full
       )
 
-    maxit_out <- if("maxit_out" %in% names(configuration)) { configuration$maxit_out } else { 50 }
+    maxit_out <- if("maxit_out" %in% names(configuration)) { configuration$maxit_out } else { 50}
 
     # Main loop
     nb_iter <- 0
@@ -50,48 +49,31 @@ optimize_zi <- function(init_parameters, Y, X, O, configuration) {
         }
 
         # Steps
-        new_Omega <- cpp_optimize_zi_Omega(
-            M = parameters$M, X = X, Theta = parameters$Theta, S = parameters$S
-        )
-        new_Theta <- cpp_optimize_zi_Theta(
-            M = parameters$M, X = X
-        )
-        new_Theta0 <- cpp_optimize_zi_Theta0(
-            init_Theta0 = parameters$Theta0,
-            X = X, Pi = parameters$Pi,
-            configuration = config_optim_Theta0
-        )$Theta0
-        new_Pi <- cpp_optimize_zi_Pi(
-            Y = Y, X = X, O = O, M = parameters$M, S = parameters$S, Theta0 = new_Theta0
-        )
-        new_M <- cpp_optimize_zi_M(
-            init_M = parameters$M,
-            Y = Y, X = X, O = O, Pi = new_Pi, S = parameters$S, Theta = new_Theta, Omega = new_Omega,
-            configuration = config_optim_M
-        )$M
-        new_S <- cpp_optimize_zi_S(
+
+        new_Omega <- cpp_optimize_pln_Omega(M = parameters$M, X = X, Theta = parameters$Theta, S = parameters$S)
+        new_Theta <- cpp_optimize_pln_Theta(M = parameters$M, X = X)
+        new_S <- cpp_optimize_pln_S(
             init_S = parameters$S,
-            O = O, M = new_M, Pi = new_Pi, Theta = new_Theta, diag_Omega = diag(new_Omega),
+            O = O, M = parameters$M, Theta = new_Theta, diag_Omega = diag(new_Omega),
             configuration = config_optim_S
         )$S
-
+        new_M <- cpp_optimize_pln_M(
+            init_M = parameters$M,
+            Y = Y, X = X, O = O, S = parameters$S, Theta = new_Theta, Omega = new_Omega,
+            configuration = config_optim_M
+        )$M
 
         # Check convergence
-        new_parameters <- list(
-            Omega = new_Omega, Theta = new_Theta, Theta0 = new_Theta0,
-            Pi = new_Pi, M = new_M, S = new_S
-        )
+        new_parameters <- list(Omega = new_Omega, Theta = new_Theta, M = new_M, S = new_S)
         nb_iter <- nb_iter + 1
 
-        vloglik <- cpp_optimize_zi_vloglik(
-          Y, X, O, new_Theta0, new_Omega, new_Theta, new_Pi, new_M, new_S
-        )
+        vloglik <- cpp_optimize_pln_vloglik(Y, X, O, new_Omega, new_Theta, new_M, new_S)
 
         criterion[nb_iter] <- new_objective <- -sum(vloglik)
 
-        objective_converged <-
-            (objective - new_objective) < configuration$ftol_out |
-            (objective - new_objective)/abs(new_objective) < configuration$ftol_out
+        objective_converged <- FALSE
+            # abs(objective - new_objective) < configuration$ftol_out |
+            # abs(objective - new_objective)/abs(new_objective) < configuration$ftol_out
 
         parameters_converged <- parameter_list_converged(
             parameters, new_parameters,

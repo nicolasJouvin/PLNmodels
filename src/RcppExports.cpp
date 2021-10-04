@@ -106,6 +106,111 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_optimize_pln_vloglik
+arma::vec cpp_optimize_pln_vloglik(const arma::mat& Y, const arma::mat& X, const arma::mat& O, const arma::mat& Omega, const arma::mat& Theta, const arma::mat& M, const arma::mat& S);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_vloglik(SEXP YSEXP, SEXP XSEXP, SEXP OSEXP, SEXP OmegaSEXP, SEXP ThetaSEXP, SEXP MSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Omega(OmegaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_vloglik(Y, X, O, Omega, Theta, M, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_optimize_pln_Omega_full
+arma::mat cpp_optimize_pln_Omega_full(const arma::mat& M, const arma::mat& X, const arma::mat& Theta, const arma::mat& S);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_Omega_full(SEXP MSEXP, SEXP XSEXP, SEXP ThetaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_Omega_full(M, X, Theta, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_optimize_pln_Omega_spherical
+arma::mat cpp_optimize_pln_Omega_spherical(const arma::mat& M, const arma::mat& X, const arma::mat& Theta, const arma::mat& S);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_Omega_spherical(SEXP MSEXP, SEXP XSEXP, SEXP ThetaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_Omega_spherical(M, X, Theta, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_optimize_pln_Omega_diagonal
+arma::mat cpp_optimize_pln_Omega_diagonal(const arma::mat& M, const arma::mat& X, const arma::mat& Theta, const arma::mat& S);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_Omega_diagonal(SEXP MSEXP, SEXP XSEXP, SEXP ThetaSEXP, SEXP SSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_Omega_diagonal(M, X, Theta, S));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_optimize_pln_Theta
+arma::mat cpp_optimize_pln_Theta(const arma::mat& M, const arma::mat& X);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_Theta(SEXP MSEXP, SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_Theta(M, X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_optimize_pln_M
+Rcpp::List cpp_optimize_pln_M(const arma::mat& init_M, const arma::mat& Y, const arma::mat& X, const arma::mat& O, const arma::mat& S, const arma::mat& Theta, const arma::mat& Omega, const Rcpp::List& configuration);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_M(SEXP init_MSEXP, SEXP YSEXP, SEXP XSEXP, SEXP OSEXP, SEXP SSEXP, SEXP ThetaSEXP, SEXP OmegaSEXP, SEXP configurationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type init_M(init_MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type S(SSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Omega(OmegaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type configuration(configurationSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_M(init_M, Y, X, O, S, Theta, Omega, configuration));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_optimize_pln_S
+Rcpp::List cpp_optimize_pln_S(const arma::mat& init_S, const arma::mat& O, const arma::mat& M, const arma::mat& Theta, const arma::vec& diag_Omega, const Rcpp::List& configuration);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_S(SEXP init_SSEXP, SEXP OSEXP, SEXP MSEXP, SEXP ThetaSEXP, SEXP diag_OmegaSEXP, SEXP configurationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type init_S(init_SSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type diag_Omega(diag_OmegaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type configuration(configurationSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_S(init_S, O, M, Theta, diag_Omega, configuration));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_optimize_rank
 Rcpp::List cpp_optimize_rank(const Rcpp::List& init_parameters, const arma::mat& Y, const arma::mat& X, const arma::mat& O, const arma::vec& w, const Rcpp::List& configuration);
 RcppExport SEXP _PLNmodels_cpp_optimize_rank(SEXP init_parametersSEXP, SEXP YSEXP, SEXP XSEXP, SEXP OSEXP, SEXP wSEXP, SEXP configurationSEXP) {
@@ -348,6 +453,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_PLNmodels_cpp_optimize_full", (DL_FUNC) &_PLNmodels_cpp_optimize_full, 6},
     {"_PLNmodels_cpp_optimize_vestep_full", (DL_FUNC) &_PLNmodels_cpp_optimize_vestep_full, 8},
     {"_PLNmodels_cpp_optimize_genetic_modeling", (DL_FUNC) &_PLNmodels_cpp_optimize_genetic_modeling, 7},
+    {"_PLNmodels_cpp_optimize_pln_vloglik", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_vloglik, 7},
+    {"_PLNmodels_cpp_optimize_pln_Omega_full", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_Omega_full, 4},
+    {"_PLNmodels_cpp_optimize_pln_Omega_spherical", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_Omega_spherical, 4},
+    {"_PLNmodels_cpp_optimize_pln_Omega_diagonal", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_Omega_diagonal, 4},
+    {"_PLNmodels_cpp_optimize_pln_Theta", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_Theta, 2},
+    {"_PLNmodels_cpp_optimize_pln_M", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_M, 8},
+    {"_PLNmodels_cpp_optimize_pln_S", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_S, 6},
     {"_PLNmodels_cpp_optimize_rank", (DL_FUNC) &_PLNmodels_cpp_optimize_rank, 6},
     {"_PLNmodels_cpp_optimize_vestep_rank", (DL_FUNC) &_PLNmodels_cpp_optimize_vestep_rank, 8},
     {"_PLNmodels_cpp_optimize_sparse", (DL_FUNC) &_PLNmodels_cpp_optimize_sparse, 7},

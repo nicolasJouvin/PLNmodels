@@ -96,7 +96,12 @@ PLNfit <- R6Class(
         LMs   <- lapply(1:p, function(j) lm.wfit(covariates, log(1 + responses[,j]), weights, offset =  offsets[,j]) )
         private$Theta <- do.call(rbind, lapply(LMs, coefficients))
         residuals     <- do.call(cbind, lapply(LMs, residuals))
-        private$M     <- residuals
+        if (control$vem) {
+          private$M <- residuals
+        } else {
+          private$M <- residuals + covariates %*% t(private$Theta)
+        }
+
         private$S2    <- matrix(0.1,n,p)
         if (control$covariance == "spherical") {
           private$Sigma <- diag(sum(residuals^2)/(n*p), p, p)
@@ -115,21 +120,47 @@ PLNfit <- R6Class(
     #' @description Call to the C++ optimizer and update of the relevant fields
     optimize = function(responses, covariates, offsets, weights, control) {
 
-      optimizer  <-
-        switch(self$vcov_model,
-               "spherical" = cpp_optimize_spherical,
-               "diagonal"  = cpp_optimize_diagonal ,
-               "genetic"   = cpp_optimize_genetic_modeling,
-               "full"      = cpp_optimize_full
-        )
+      if (control$vem) {
+        args <- list(Y = responses, X = covariates, O = offsets, configuration = control)
+        args$init_parameters <- list(Omega = NA, Theta = t(private$Theta), M = private$M, S = sqrt(private$S2))
+        optim_out <- do.call(optimize_vem, args)
 
-      args <- list(Y = responses, X = covariates, O = offsets, w = weights, configuration = control)
-      if (self$vcov_model == "genetic") {
-        args$init_parameters <- list(Theta = private$Theta, M = private$M, S = sqrt(private$S2), rho = 0.25)
-        args$C <- control$corr_matrix
+        ## Z <- offsets + covariates %*% optim_out$parameters$Theta
+        Z <- offsets + optim_out$parameters$M
+        A <- exp(Z + .5 * optim_out$parameters$S^2)
+
+        Ji <- optim_out$vloglik
+        attr(Ji, "weights") <- weights
+
+        self$update(
+          Theta      = t(optim_out$parameters$Theta),
+          Sigma      = solve(optim_out$parameters$Omega),
+          M          = optim_out$parameters$M,
+          S2         = (optim_out$parameters$S)**2,
+          Z          = Z,
+          A          = A,
+          Ji         = Ji,
+          monitoring = list(
+            iterations = optim_out$nb_iter,
+            message    = optim_out$stop_reason,
+            objective  = optim_out$criterion)
+        )
       } else {
-        args$init_parameters <- list(Theta = private$Theta, M = private$M, S = sqrt(private$S2))
-      }
+        optimizer  <-
+          switch(self$vcov_model,
+                 "spherical" = cpp_optimize_spherical,
+                 "diagonal"  = cpp_optimize_diagonal ,
+                 "genetic"   = cpp_optimize_genetic_modeling,
+                 "full"      = cpp_optimize_full
+          )
+
+        args <- list(Y = responses, X = covariates, O = offsets, w = weights, configuration = control)
+        if (self$vcov_model == "genetic") {
+          args$init_parameters <- list(Theta = private$Theta, M = private$M, S = sqrt(private$S2), rho = 0.25)
+          args$C <- control$corr_matrix
+        } else {
+          args$init_parameters <- list(Theta = private$Theta, M = private$M, S = sqrt(private$S2))
+        }
 
       optim_out <- do.call(optimizer, args)
 
@@ -147,6 +178,7 @@ PLNfit <- R6Class(
           iterations = optim_out$iterations,
           message    = statusToMessage(optim_out$status))
       )
+      }
 
       if (self$vcov_model == "genetic")
         private$psi <- list(sigma2 = optim_out$sigma2, rho = optim_out$rho)
