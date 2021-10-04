@@ -69,9 +69,10 @@ ZIPLNfit <- R6Class(
     #' @param A      matrix of fitted values
     #' @param monitoring a list with optimization monitoring quantities
     #' @return Update the current [`PLNfit`] object
-    update = function(Theta=NA, Theta0=NA, Sigma=NA, M=NA, S2=NA, Ji=NA, R2=NA, Z=NA, A=NA, monitoring=NA) {
+    update = function(Theta=NA, Theta0=NA, Sigma=NA, M=NA, S2=NA, Pi=NA, Ji=NA, R2=NA, Z=NA, A=NA, monitoring=NA) {
       super$update(Theta=Theta, Sigma=Sigma, M=M, S2=S2, Ji=Ji, R2=R2, Z=Z, A=A, monitoring=monitoring)
       if (!anyNA(Theta0)) private$Theta0 <- Theta0
+      if (!anyNA(Pi)) private$Pi <- Pi
     },
 
    ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +97,7 @@ ZIPLNfit <- R6Class(
         Sigma      = solve(optim_out$parameters$Omega),
         M          = optim_out$parameters$M,
         S2         = (optim_out$parameters$S)**2,
+        Pi         = Pi,
         Z          = Z,
         A          = A,
         Ji         = Ji,
