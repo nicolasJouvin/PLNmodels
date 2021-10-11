@@ -91,18 +91,17 @@ PLNfit <- R6Class(
         private$Ji    <- control$inception$loglik_vec
       } else {
         # if (control$trace > 1) cat("\n Use GLM Poisson to define the inceptive model")
-        # LMs   <- lapply(1:p, function(j) glm.fit(covariates, responses[,j], weights, offset =  offsets[,j], family = poisson(), intercept = FALSE))
+        LMs   <- lapply(1:p, function(j) glm.fit(covariates, responses[,j], weights, offset =  offsets[,j], family = poisson(), intercept = FALSE))
         if (control$trace > 1) cat("\n Use LM after log transformation to define the inceptive model")
-        LMs   <- lapply(1:p, function(j) lm.wfit(covariates, log(1 + responses[,j]), weights, offset =  offsets[,j]) )
+        ## LMs   <- lapply(1:p, function(j) lm.wfit(covariates, log(1 + responses[,j]), weights, offset =  log(1 + offsets[,j])) )
         private$Theta <- do.call(rbind, lapply(LMs, coefficients))
         residuals     <- do.call(cbind, lapply(LMs, residuals))
         if (control$vem) {
-          private$M <- residuals
-        } else {
           private$M <- residuals + covariates %*% t(private$Theta)
+        } else {
+          private$M <- residuals
         }
-
-        private$S2    <- matrix(0.1,n,p)
+        private$S2    <- matrix(.1,n,p)
         if (control$covariance == "spherical") {
           private$Sigma <- diag(sum(residuals^2)/(n*p), p, p)
         } else  if (control$covariance == "diagonal") {

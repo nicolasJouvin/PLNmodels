@@ -211,6 +211,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_optimize_pln_VE
+Rcpp::List cpp_optimize_pln_VE(const arma::mat& init_M, const arma::mat& init_S, const arma::mat& Y, const arma::mat& X, const arma::mat& O, const arma::mat& Theta, const arma::mat& Omega, const Rcpp::List& configuration);
+RcppExport SEXP _PLNmodels_cpp_optimize_pln_VE(SEXP init_MSEXP, SEXP init_SSEXP, SEXP YSEXP, SEXP XSEXP, SEXP OSEXP, SEXP ThetaSEXP, SEXP OmegaSEXP, SEXP configurationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type init_M(init_MSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type init_S(init_SSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type O(OSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Omega(OmegaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type configuration(configurationSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_optimize_pln_VE(init_M, init_S, Y, X, O, Theta, Omega, configuration));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_optimize_rank
 Rcpp::List cpp_optimize_rank(const Rcpp::List& init_parameters, const arma::mat& Y, const arma::mat& X, const arma::mat& O, const arma::vec& w, const Rcpp::List& configuration);
 RcppExport SEXP _PLNmodels_cpp_optimize_rank(SEXP init_parametersSEXP, SEXP YSEXP, SEXP XSEXP, SEXP OSEXP, SEXP wSEXP, SEXP configurationSEXP) {
@@ -460,6 +478,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_PLNmodels_cpp_optimize_pln_Theta", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_Theta, 2},
     {"_PLNmodels_cpp_optimize_pln_M", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_M, 8},
     {"_PLNmodels_cpp_optimize_pln_S", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_S, 6},
+    {"_PLNmodels_cpp_optimize_pln_VE", (DL_FUNC) &_PLNmodels_cpp_optimize_pln_VE, 8},
     {"_PLNmodels_cpp_optimize_rank", (DL_FUNC) &_PLNmodels_cpp_optimize_rank, 6},
     {"_PLNmodels_cpp_optimize_vestep_rank", (DL_FUNC) &_PLNmodels_cpp_optimize_vestep_rank, 8},
     {"_PLNmodels_cpp_optimize_sparse", (DL_FUNC) &_PLNmodels_cpp_optimize_sparse, 7},

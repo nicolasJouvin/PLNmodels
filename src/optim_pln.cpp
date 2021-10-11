@@ -187,3 +187,63 @@ Rcpp::List cpp_optimize_pln_S(
         Rcpp::Named("iterations") = result.nb_iterations,
         Rcpp::Named("S") = S);
 }
+
+// [[Rcpp::export]]
+Rcpp::List cpp_optimize_pln_VE(
+    const arma::mat & init_M,        // (n,p)
+    const arma::mat & init_S,        // (n,p)
+    const arma::mat & Y,             // responses (n,p)
+    const arma::mat & X,             // covariates (n,d)
+    const arma::mat & O,             // offsets (n, p)
+    const arma::mat & Theta,         // (d,p)
+    const arma::mat & Omega,         // (p,p)
+    const Rcpp::List & configuration // List of config values
+) {
+
+    const auto metadata = tuple_metadata(init_M, init_S);
+    enum { M_ID, S_ID }; // Names for metadata indexes
+
+    auto parameters = std::vector<double>(metadata.packed_size);
+    metadata.map<M_ID>(parameters.data()) = init_M;
+    metadata.map<S_ID>(parameters.data()) = init_S;
+
+    auto optimizer = new_nlopt_optimizer(configuration, parameters.size());
+    if(configuration.containsElementNamed("xtol_abs")) {
+        SEXP value = configuration["xtol_abs"];
+        if(Rcpp::is<double>(value)) {
+            set_uniform_xtol_abs(optimizer.get(), Rcpp::as<double>(value));
+        } else {
+            auto per_param_list = Rcpp::as<Rcpp::List>(value);
+            auto packed = std::vector<double>(metadata.packed_size);
+            set_from_r_sexp(metadata.map<M_ID>(packed.data()), per_param_list["M"]);
+            set_from_r_sexp(metadata.map<S_ID>(packed.data()), per_param_list["S"]);
+            set_per_value_xtol_abs(optimizer.get(), packed);
+        }
+    }
+
+    // Optimize
+    auto objective_and_grad =
+        [&metadata, &Y, &X, &O, &Theta, &Omega](const double * params, double * grad) -> double {
+        const arma::mat M = metadata.map<M_ID>(params);
+        const arma::mat S = metadata.map<S_ID>(params);
+
+        arma::mat S2 = S % S;
+        arma::mat Z = O + M;
+        arma::mat A = exp(Z + 0.5 * S2);
+        arma::mat M_X_Theta = M - X * Theta; // (n,p)
+
+        double objective = - trace(Y % (O + M) - A + 0.5 * log(S2) - 0.5 * (M_X_Theta * Omega % M_X_Theta + S2 * diagmat(Omega)));
+        metadata.map<M_ID>(grad) = M_X_Theta * Omega + A - Y;
+        metadata.map<S_ID>(grad) = S.each_row() % diagvec(Omega).t() + S % A - pow(S, -1.) ;
+
+        return objective;
+    };
+    OptimizerResult result = minimize_objective_on_parameters(optimizer.get(), objective_and_grad, parameters);
+
+    arma::mat M = metadata.copy<M_ID>(parameters.data());
+    arma::mat S = metadata.copy<S_ID>(parameters.data());
+    return Rcpp::List::create(
+        Rcpp::Named("status") = static_cast<int>(result.status),
+        Rcpp::Named("iterations") = result.nb_iterations,
+        Rcpp::Named("M") = M, Rcpp::Named("S") = S);
+}

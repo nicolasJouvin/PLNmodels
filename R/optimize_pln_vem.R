@@ -29,7 +29,7 @@ optimize_vem <- function(init_parameters, Y, X, O, configuration) {
       "full"      = cpp_optimize_pln_Omega_full
       )
 
-    maxit_out <- if("maxit_out" %in% names(configuration)) { configuration$maxit_out } else { 50}
+    maxit_out <- if("maxit_out" %in% names(configuration)) { configuration$maxit_out } else {50}
 
     # Main loop
     nb_iter <- 0
@@ -52,16 +52,20 @@ optimize_vem <- function(init_parameters, Y, X, O, configuration) {
 
         new_Omega <- cpp_optimize_pln_Omega(M = parameters$M, X = X, Theta = parameters$Theta, S = parameters$S)
         new_Theta <- cpp_optimize_pln_Theta(M = parameters$M, X = X)
-        new_S <- cpp_optimize_pln_S(
-            init_S = parameters$S,
-            O = O, M = parameters$M, Theta = new_Theta, diag_Omega = diag(new_Omega),
-            configuration = config_optim_S
-        )$S
+        # new_VE <- cpp_optimize_pln_VE(init_M = parameters$M, init_S = parameters$S,
+        #                               Y =Y, O = O, X = X,
+        #                               new_Theta, Omega = new_Omega, configuration)
+        # new_M <- new_VE$M; new_S <- new_VE$S
         new_M <- cpp_optimize_pln_M(
             init_M = parameters$M,
             Y = Y, X = X, O = O, S = parameters$S, Theta = new_Theta, Omega = new_Omega,
             configuration = config_optim_M
         )$M
+        new_S <- cpp_optimize_pln_S(
+            init_S = parameters$S,
+            O = O, M = new_M, Theta = new_Theta, diag_Omega = diag(new_Omega),
+            configuration = config_optim_S
+        )$S
 
         # Check convergence
         new_parameters <- list(Omega = new_Omega, Theta = new_Theta, M = new_M, S = new_S)
@@ -71,9 +75,9 @@ optimize_vem <- function(init_parameters, Y, X, O, configuration) {
 
         criterion[nb_iter] <- new_objective <- -sum(vloglik)
 
-        objective_converged <- FALSE
-            # abs(objective - new_objective) < configuration$ftol_out |
-            # abs(objective - new_objective)/abs(new_objective) < configuration$ftol_out
+        objective_converged <-
+            abs(objective - new_objective) < configuration$ftol_out |
+            abs(objective - new_objective)/abs(new_objective) < configuration$ftol_out
 
         parameters_converged <- parameter_list_converged(
             parameters, new_parameters,

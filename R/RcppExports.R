@@ -53,6 +53,10 @@ cpp_optimize_pln_S <- function(init_S, O, M, Theta, diag_Omega, configuration) {
     .Call('_PLNmodels_cpp_optimize_pln_S', PACKAGE = 'PLNmodels', init_S, O, M, Theta, diag_Omega, configuration)
 }
 
+cpp_optimize_pln_VE <- function(init_M, init_S, Y, X, O, Theta, Omega, configuration) {
+    .Call('_PLNmodels_cpp_optimize_pln_VE', PACKAGE = 'PLNmodels', init_M, init_S, Y, X, O, Theta, Omega, configuration)
+}
+
 cpp_optimize_rank <- function(init_parameters, Y, X, O, w, configuration) {
     .Call('_PLNmodels_cpp_optimize_rank', PACKAGE = 'PLNmodels', init_parameters, Y, X, O, w, configuration)
 }
